@@ -65,6 +65,11 @@ public class ClientServer implements Runnable{
                 }
             }
         }catch (IOException e){
+            try {
+                stop();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
             e.printStackTrace();
         }
     }
