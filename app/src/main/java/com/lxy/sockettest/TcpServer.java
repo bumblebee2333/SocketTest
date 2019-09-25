@@ -46,6 +46,7 @@ public class TcpServer implements Runnable {
     public void run() {
         try{
             while (true){
+                mSelector.wakeup();
                 int select = mSelector.select();
                 if(select <= 0){
                     continue;
@@ -58,10 +59,13 @@ public class TcpServer implements Runnable {
                     if(key.isValid()){
                         if(key.isAcceptable()){
                             handleAccept();
+                            Log.d(TAG,"accepting!!!");
                         }else if(key.isReadable()){
                             handleRead(key);
+                            Log.d(TAG,"reading!!!");
                         }else if(key.isWritable()){
                             handleWrite(key);
+                            Log.d(TAG,"writing!!!");
                         }
                     }
                 }

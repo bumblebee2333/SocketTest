@@ -24,14 +24,26 @@ public class ClientServer implements Runnable{
     @RequiresApi(api = Build.VERSION_CODES.N)
     public ClientServer(){
         try {
-            mSelector = Selector.open();
-            mSocketChannel = SocketChannel.open();
-            mSocketChannel.configureBlocking(false);
-            mSocketChannel.connect(new InetSocketAddress("127.0.0.1",8080));
-            mSocketChannel.register(mSelector,SelectionKey.OP_CONNECT);
+            if(mSelector == null){
+                mSelector = Selector.open();
+            }
+            createSocketChannel();
+            createSocketChannel();
+//            mSocketChannel = SocketChannel.open();
+//            mSocketChannel.configureBlocking(false);
+//            mSocketChannel.connect(new InetSocketAddress("127.0.0.1",8080));
+//            mSocketChannel.register(mSelector,SelectionKey.OP_CONNECT);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public SocketChannel createSocketChannel() throws IOException {
+        SocketChannel socketChannel = SocketChannel.open();
+        socketChannel.configureBlocking(false);
+        socketChannel.connect(new InetSocketAddress("127.0.0.1",8080));
+        socketChannel.register(mSelector,SelectionKey.OP_CONNECT);
+        return socketChannel;
     }
 
     public void start(){
@@ -44,6 +56,7 @@ public class ClientServer implements Runnable{
     public void run() {
         try{
             while (true){
+                //mSelector.wakeup();
                 int select = mSelector.select();
                 if(select < 0){
                     continue;
@@ -55,10 +68,13 @@ public class ClientServer implements Runnable{
                     if(key.isValid()){
                         if(key.isConnectable()){
                             connect(key);
+                            Log.d(TAG,"connecting!!!");
                         }else if(key.isReadable()){
                             handleRead(key);
+                            Log.d(TAG,"reading!!!");
                         }else if(key.isWritable()){
                             handleWrite(key);
+                            Log.d(TAG,"writing!!!");
                         }
                     }
                     it.remove();
