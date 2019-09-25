@@ -6,11 +6,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Build;
 import android.os.Bundle;
 
+import java.io.IOException;
+
 public class MainActivity extends AppCompatActivity implements Runnable{
     private ClientServer mClientServer;
     private TcpServer mTcpServer;
     private Thread mThread;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
